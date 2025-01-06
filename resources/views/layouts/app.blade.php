@@ -313,7 +313,7 @@
                 <a href="index.html" class="navigation__link">Home</a>
               </li>
               <li class="navigation__item">
-                <a href="shop.html" class="navigation__link">Shop</a>
+                <a href="{{route('shop.index')}}" class="navigation__link">Shop</a>
               </li>
               <li class="navigation__item">
                 <a href="cart.html" class="navigation__link">Cart</a>
@@ -392,7 +392,7 @@
         <div class="header-desk header-desk_type_1">
           <div class="logo">
             <a href="{{route('home.index')}}">
-              <img src="{{asset('assets/images/logo.png')}}" alt="Uomo" class="logo__image d-block" />
+              <img src="{{asset('assets/images/logo.png')}}" alt="Uomo" class="logo__image d-block"/>
             </a>
           </div>
 
@@ -402,7 +402,7 @@
                 <a href="{{route('home.index')}}" class="navigation__link">Home</a>
               </li>
               <li class="navigation__item">
-                <a href="shop.html" class="navigation__link">Shop</a>
+                <a href="{{route('shop.index')}}" class="navigation__link">Shop</a>
               </li>
               <li class="navigation__item">
                 <a href="cart.html" class="navigation__link">Cart</a>
