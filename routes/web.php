@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\WishlistController;
+use App\Models\Coupon;
 
 Auth::routes();
 
@@ -29,6 +30,9 @@ Route::delete('/cart/clear', [CartController::class,'empty_cart'])->name('cart.e
 
 Route::post('/wishlist/add',[WishlistController::class,'add_to_wishlist'])->name('wishlist.add');
 Route::get('/wishlist',[WishlistController::class,'index'])->name('wishlist.index');
+Route::delete('/wishlist/item/remove/{rowId}',[WishlistController::class,'remove_item'])->name('wishlist.item.remove');
+Route::delete('/wishlist/clear',[WishlistController::class,'empty_wishlist'])->name('wishlist.item.clear');
+Route::post('/wishlist/move-to-cart/{rowId}',[WishlistController::class,'move_to_cart'])->name('wishlist.move.to.cart');
 
 Route::middleware(['auth'])->group(function(){
     Route::get('/account-dashboard',[UserController::class,'index'])->name('user.index');
@@ -60,8 +64,15 @@ Route::delete('/admin/brand/{id}/delete', [BrandController::class, 'destroy'])->
     Route::post('/admin/product/store',[ProductController::class,'product_store'])->name('admin.product.store');
     Route::get('/admin/product/edit/{id}', [ProductController::class, 'product_edit'])->name('admin.product.edit');
     Route::put('/admin/product/update/{id}', [ProductController::class, 'product_update'])->name('admin.product.update');
-    Route::get('admin/product/{id}/show', [ProductController::class, 'product_show'])->name('admin.product.show');
-    Route::delete('admin/product/{id}', [ProductController::class, 'product_delete'])->name('admin.product.delete');
+    Route::get('/admin/product/{id}/show', [ProductController::class, 'product_show'])->name('admin.product.show');
+    Route::delete('/admin/product/{id}', [ProductController::class, 'product_delete'])->name('admin.product.delete');
+    Route::get('/admin/coupons',[ProductController::class,'coupons'])->name('admin.coupons');
+    Route::get('/admin/coupon/add',[ProductController::class,'coupon_add'])->name('admin.coupon.add');
+    Route::post('/admin/coupon/store',[ProductController::class,'coupon_store'])->name('admin.coupon.store');
+    Route::get('/admin/coupon/edit/{id}', [ProductController::class, 'coupon_edit'])->name('admin.coupon.edit');
+    Route::put('/admin/coupon/update', [ProductController::class, 'coupon_update'])->name('admin.coupon.update');
+
+
 
 });
 

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Coupon;
 use Intervention\Image\Laravel\Facades\Image;
 
 class ProductController extends Controller
@@ -182,15 +183,13 @@ class ProductController extends Controller
 }
 public function product_delete($id)
 {
-    // البحث عن المنتج باستخدام الـ ID
+
     $product = Product::findOrFail($id);
 
-    // حذف الصورة الرئيسية إذا كانت موجودة
     if ($product->image && File::exists(public_path('uploads/products/' . $product->image))) {
         File::delete(public_path('uploads/products/' . $product->image));
     }
 
-    // حذف صور المعرض إذا كانت موجودة
     if ($product->images) {
         foreach (explode(',', $product->images) as $galleryImage) {
             if (File::exists(public_path('uploads/products/' . $galleryImage))) {
@@ -198,13 +197,58 @@ public function product_delete($id)
             }
         }
     }
-
-    // حذف المنتج من قاعدة البيانات
     $product->delete();
-
     return redirect()->route('admin.product.index')->with('status', 'Product has been deleted successfully!');
 }
+public function coupons(){
+    $coupons=Coupon::orderBy('expiry_date','DESC')->paginate(12);
+    return view('admin.coupon.index',compact('coupons'));
+}
+public function coupon_add(){
+    return view('admin.coupon.coupon_add');
+}
 
+public function coupon_store(Request $request){
+    $request->validate([
+        'code'=>'required',
+        'type'=>'required',
+        'value'=>'required|numeric',
+        'cart_value'=>'required|numeric',
+        'expiry_date'=>'required|date'
+    ]);
+    $coupon=new Coupon();
+    $coupon->code = $request->code;
+    $coupon->type = $request->type;
+    $coupon->value = $request->value;
+    $coupon->cart_value = $request->cart_value;
+    $coupon->expiry_date = $request->expiry_date;
+    $coupon->save();
+
+    return redirect()->route('admin.coupons')->with('Coupon has been added successfully!');
+}
+public function coupon_edit ($id){
+    $coupon=Coupon::find($id);
+    return view('admin.coupon.coupon-edit',compact('coupon'));
+}
+public function coupon_update(Request $request){
+    $request->validate([
+        'code'=>'required',
+        'type'=>'required',
+        'value'=>'required|numeric',
+        'cart_value'=>'required|numeric',
+        'expiry_date'=>'required|date'
+    ]);
+    $coupon= Coupon::find($request->id);
+    $coupon->code = $request->code;
+    $coupon->type = $request->type;
+    $coupon->value = $request->value;
+    $coupon->cart_value = $request->cart_value;
+    $coupon->expiry_date = $request->expiry_date;
+    $coupon->save();
+    return redirect()->route('admin.coupons')->with('Coupon has been Updated successfully!');
+
+
+}
 
 
 }
