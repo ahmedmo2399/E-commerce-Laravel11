@@ -246,8 +246,11 @@ public function coupon_update(Request $request){
     $coupon->expiry_date = $request->expiry_date;
     $coupon->save();
     return redirect()->route('admin.coupons')->with('Coupon has been Updated successfully!');
-
-
+}
+public function coupon_delete($id){
+    $coupon=Coupon::find($id);
+    $coupon->delete();
+    return redirect()->route('admin.coupons')->with('Coupon has been Deleted successfully!');
 }
 
 

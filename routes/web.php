@@ -71,6 +71,7 @@ Route::delete('/admin/brand/{id}/delete', [BrandController::class, 'destroy'])->
     Route::post('/admin/coupon/store',[ProductController::class,'coupon_store'])->name('admin.coupon.store');
     Route::get('/admin/coupon/edit/{id}', [ProductController::class, 'coupon_edit'])->name('admin.coupon.edit');
     Route::put('/admin/coupon/update', [ProductController::class, 'coupon_update'])->name('admin.coupon.update');
+    Route::delete('/admin/coupon/delete/{id}',[ProductController::class,'coupon_delete'])->name('admin.coupon.delete');
 
 
 
