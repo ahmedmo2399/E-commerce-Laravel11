@@ -1,5 +1,10 @@
 @extends('layouts.app')
 @section('content')
+<style>
+    .text-success{
+        color: #278c04 !important;
+    }
+</style>
 <main class="pt-90">
     <div class="mb-4 pb-4"></div>
     <section class="shop-checkout container">
@@ -93,62 +98,73 @@
                 </td>
               </tr>
                @endforeach
-              <tr>
-                <td>
-                  <div class="shopping-cart__product-item">
-                    <img loading="lazy" src="assets/images/cart-item-3.jpg" width="120" height="120" alt="" />
-                  </div>
-                </td>
-                <td>
-                  <div class="shopping-cart__product-item__detail">
-                    <h4>Cobleknit Shawl</h4>
-                    <ul class="shopping-cart__product-item__options">
-                      <li>Color: Yellow</li>
-                      <li>Size: L</li>
-                    </ul>
-                  </div>
-                </td>
-                <td>
-                  <span class="shopping-cart__product-price">$99</span>
-                </td>
-                <td>
-                  <div class="qty-control position-relative">
-                    <input type="number" name="quantity" value="3" min="1" class="qty-control__number text-center">
-                    <div class="qty-control__reduce">-</div>
-                    <div class="qty-control__increase">+</div>
-                  </div>
-                </td>
-                <td>
-                  <span class="shopping-cart__subtotal">$297</span>
-                </td>
-                <td>
-                  <a href="#" class="remove-cart">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="#767676" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M0.259435 8.85506L9.11449 0L10 0.885506L1.14494 9.74056L0.259435 8.85506Z" />
-                      <path d="M0.885506 0.0889838L9.74057 8.94404L8.85506 9.82955L0 0.97449L0.885506 0.0889838Z" />
-                    </svg>
-                  </a>
-                </td>
-              </tr>
             </tbody>
           </table>
           <div class="cart-table-footer">
-            <form action="#" class="position-relative bg-body">
-              <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code">
-              <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type="submit"
-                value="APPLY COUPON">
+            @if (!Session::has('coupon'))
+            <form action="{{route('cart.coupon.apply')}}" method="POST" class="position-relative bg-body">
+                @csrf
+              <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code" value="">
+              <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type="submit" value="APPLY COUPON">
             </form>
+            @else
+            <form action="{{route('cart.coupon.remove')}}" method="POST" class="position-relative bg-body">
+                @csrf
+                @method('DELETE')
+              <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code" value="@if(Session::has('coupon')){{Session::get('coupon')['code']}}Applied! @endif">
+              <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type="submit" value="REMOVE COUPON">
+            </form>
+            @endif
             <form action="{{route('cart.empty')}}" method="POST">
                 @csrf
                 @method('DELETE')
                 <button class="btn btn-light" type="submit">CLEAR CART</button>
             </form>
           </div>
+          <div>
+            @if(Session::has('success'))
+            <p class="text-success">{{Session::get('success')}}</p>
+            @elseif (Session::has('error'))
+            <p class="text-danger">{{Session::get('error')}}</p>
+            @endif
+          </div>
         </div>
         <div class="shopping-cart__totals-wrapper">
           <div class="sticky-content">
             <div class="shopping-cart__totals">
               <h3>Cart Totals</h3>
+              @if (Session::has('discounts'))
+              <table class="cart-totals">
+                <tbody>
+                  <tr>
+                    <th>Subtotal</th>
+                    <td>${{Cart::instance('cart')->subtotal()}}</td>
+                  </tr>
+                  <tr>
+                    <th>Discount{{Session::get('coupon')['code']}}</th>
+                    <td>${{Session::get('discounts')['discount']}}</td>
+                  </tr>
+                  <tr>
+                    <th>Subtotal After Discount</th>
+                    <td>${{Session::get('discounts')['subtotal']}}</td>
+                  </tr>
+                  <tr>
+                    <th>Shipping</th>
+                    <td>
+                     Free
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>VAT</th>
+                    <td>${{Session::get('discounts')['tax']}}</td>
+                  </tr>
+                  <tr>
+                    <th>Total</th>
+                    <td>${{Session::get('discounts  ')['total']}}</td>
+                  </tr>
+                </tbody>
+              </table>
+                @else
               <table class="cart-totals">
                 <tbody>
                   <tr>
@@ -171,6 +187,7 @@
                   </tr>
                 </tbody>
               </table>
+              @endif
             </div>
             <div class="mobile_fixed-btn_wrapper">
               <div class="button-wrapper container">
